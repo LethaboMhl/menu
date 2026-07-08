@@ -249,3 +249,23 @@ footer {
   .card .big-title { font-size: 58px; }
   footer { flex-direction: column; gap: 6px; padding: 24px; }
 }
+
+
+/* Add fallback background colors for cards */
+.card .bg {
+  background-color: #2c1810; /* fallback color */
+  background-size: cover;
+  background-position: center;
+}
+
+/* Make sure cards are visible by default */
+.card {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Debug - show if cards are being created */
+.track .card {
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
