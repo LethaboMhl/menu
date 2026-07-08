@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flour & Ember — Artisan Bakery & Kitchen</title>
+<meta name="description" content="Freshly baked breads, pastries, brunch and coffee. Browse our menus." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="brand">
+    <span class="logo-dot"></span>
+    <span>Flour &amp; Ember</span>
+  </div>
+  <nav>
+    <a href="#menus">Menus</a>
+    <a href="#story">Our Story</a>
+    <a href="#visit">Visit</a>
+  </nav>
+  <a class="btn-ghost" href="#visit">Reserve</a>
+</header>
+
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">Bakery · Kitchen · Coffee Bar</p>
+    <h1>Warm bread, <em>slow mornings</em>, and something for every hour of the day.</h1>
+    <p class="lede">Sourdough pulled from the oven at 7am. Flat whites poured until noon. Small plates and natural wine after dark. Explore each of our menus below — swipe through, tap to open.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#menus">Browse the menus</a>
+      <a class="btn-link" href="#visit">Find the bakery →</a>
+    </div>
+  </div>
+</section>
+
+<!-- MENU CAROUSEL -->
+<section id="menus" class="menus">
+  <p class="menu-label" id="menuLabel">BREAKFAST</p>
+
+  <div class="carousel" id="carousel">
+    <div class="track" id="track">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <div class="menu-actions">
+    <button class="pill-btn" id="viewMenuBtn">View full menu</button>
+    <button class="round-btn" aria-label="Add to favourites">+</button>
+  </div>
+</section>
+
+<section id="story" class="story">
+  <div class="story-grid">
+    <div>
+      <p class="eyebrow">Our story</p>
+      <h2>Flour, fire, and a lot of patience.</h2>
+      <p>We started in 2018 with one deck oven and a stubborn belief that bread should take its time. Today we mill our own flour, ferment our doughs for 36 hours, and cook over an open hearth. Everything on our menus is made in-house, from the butter on your toast to the ice cream on your tart.</p>
+    </div>
+    <div class="story-stats">
+      <div><strong>36h</strong><span>sourdough ferment</span></div>
+      <div><strong>7am</strong><span>doors open daily</span></div>
+      <div><strong>100%</strong><span>stone-milled flour</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="visit" class="visit">
+  <h2>Come say hello.</h2>
+  <p>42 Kloof Street, Cape Town · Open Tue–Sun, 7am – late</p>
+  <a class="btn-primary" href="#">Book a table</a>
+</section>
+
+<footer>
+  <span>© 2026 Flour &amp; Ember</span>
+  <span>Baked fresh, every day.</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

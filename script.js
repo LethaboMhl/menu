@@ -1,0 +1,172 @@
+// Menu data — each card is a menu category, styled like an iOS lockscreen preview
+const menus = [
+  {
+    label: "BREAKFAST",
+    time: "Served 7 – 11am",
+    title: "Rise",
+    bg: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
+    items: [
+      ["Sourdough toast, cultured butter", "R48"],
+      ["Ember-baked eggs, harissa", "R95"],
+      ["Buttermilk pancakes, honeycomb", "R110"],
+      ["Granola, yoghurt, poached fruit", "R78"],
+    ],
+    foot: "Pastries baked from 6am",
+  },
+  {
+    label: "PASTRY",
+    time: "All day counter",
+    title: "Bake",
+    bg: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80&sat=-40",
+    items: [
+      ["Almond croissant", "R42"],
+      ["Kouign-amann", "R48"],
+      ["Cardamom bun", "R45"],
+      ["Basque cheesecake, slice", "R65"],
+      ["Chocolate babka, half loaf", "R120"],
+    ],
+    foot: "Whole cakes to order",
+  },
+  {
+    label: "LUNCH",
+    time: "Served 12 – 4pm",
+    title: "Table",
+    bg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
+    items: [
+      ["Roast tomato & burrata tartine", "R135"],
+      ["Confit chicken sandwich", "R145"],
+      ["Grain bowl, tahini, seeds", "R125"],
+      ["Wood-fired flatbread of the day", "R160"],
+      ["House soup, sourdough", "R98"],
+    ],
+    foot: "Add a glass of natural wine · R85",
+  },
+  {
+    label: "COFFEE",
+    time: "Bar open all day",
+    title: "Brew",
+    bg: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80",
+    items: [
+      ["Espresso", "R28"],
+      ["Flat white", "R42"],
+      ["Cortado", "R38"],
+      ["Filter, single origin", "R48"],
+      ["Iced oat latte", "R52"],
+    ],
+    foot: "Beans roasted weekly in Woodstock",
+  },
+  {
+    label: "SUPPER",
+    time: "Wed – Sat, from 6pm",
+    title: "Ember",
+    bg: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    items: [
+      ["Hearth bread, whipped bone marrow", "R85"],
+      ["Charred leeks, romesco", "R120"],
+      ["Line fish, brown butter, capers", "R240"],
+      ["Ember lamb, smoked yoghurt", "R285"],
+      ["Burnt honey tart, crème fraîche", "R95"],
+    ],
+    foot: "Chef's tasting · R580pp",
+  },
+];
+
+const track = document.getElementById("track");
+const dotsWrap = document.getElementById("dots");
+const label = document.getElementById("menuLabel");
+const viewBtn = document.getElementById("viewMenuBtn");
+
+let index = 0;
+
+// Build cards
+menus.forEach((m, i) => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.i = i;
+  card.innerHTML = `
+    <div class="bg" style="background-image:url('${m.bg}')"></div>
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="time-label">${m.time}</div>
+      <div class="big-title">${m.title}</div>
+      <div class="divider"></div>
+      <ul>
+        ${m.items.map(([n, p]) => `<li><span>${n}</span><span>${p}</span></li>`).join("")}
+      </ul>
+      <div class="foot">${m.foot}</div>
+    </div>
+  `;
+  card.addEventListener("click", () => {
+    if (i !== index) go(i);
+  });
+  track.appendChild(card);
+});
+
+// Build dots
+menus.forEach((_, i) => {
+  const d = document.createElement("button");
+  d.setAttribute("aria-label", `Menu ${i + 1}`);
+  d.addEventListener("click", () => go(i));
+  dotsWrap.appendChild(d);
+});
+
+const cards = [...track.querySelectorAll(".card")];
+const dots = [...dotsWrap.querySelectorAll("button")];
+
+function render() {
+  const SPACING = window.innerWidth < 720 ? 210 : 240;
+  cards.forEach((c, i) => {
+    const offset = i - index;
+    const abs = Math.abs(offset);
+    const translate = offset * SPACING;
+    const scale = abs === 0 ? 1 : abs === 1 ? 0.86 : 0.72;
+    const opacity = abs > 2 ? 0 : abs === 0 ? 1 : abs === 1 ? 0.85 : 0.4;
+    const z = 10 - abs;
+    c.style.transform = `translateX(${translate}px) scale(${scale})`;
+    c.style.opacity = opacity;
+    c.style.zIndex = z;
+    c.style.filter = abs === 0 ? "none" : "brightness(0.75)";
+  });
+  dots.forEach((d, i) => d.classList.toggle("active", i === index));
+  label.textContent = menus[index].label;
+}
+
+function go(i) {
+  index = Math.max(0, Math.min(menus.length - 1, i));
+  render();
+}
+
+// Swipe / drag
+let startX = null;
+let currentX = 0;
+track.addEventListener("pointerdown", (e) => {
+  startX = e.clientX;
+  currentX = 0;
+  track.setPointerCapture(e.pointerId);
+});
+track.addEventListener("pointermove", (e) => {
+  if (startX === null) return;
+  currentX = e.clientX - startX;
+});
+track.addEventListener("pointerup", () => {
+  if (startX === null) return;
+  if (currentX < -50) go(index + 1);
+  else if (currentX > 50) go(index - 1);
+  startX = null;
+});
+track.addEventListener("pointercancel", () => { startX = null; });
+
+// Keyboard
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") go(index + 1);
+  if (e.key === "ArrowLeft") go(index - 1);
+});
+
+// Resize
+window.addEventListener("resize", render);
+
+viewBtn.addEventListener("click", () => {
+  alert(`Opening full ${menus[index].label} menu…`);
+});
+
+render();
