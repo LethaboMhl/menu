@@ -82,13 +82,13 @@
 </footer>
 
 <script>
-  // Menu data — each card is a menu category, styled like an iOS lockscreen preview
+// Menu data — each card is a menu category, styled like an iOS lockscreen preview
 const menus = [
   {
     label: "BREAKFAST",
     time: "Served 7 – 11am",
     title: "Rise",
-    bg: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
+    bg: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
     items: [
       ["Sourdough toast, cultured butter", "R48"],
       ["Ember-baked eggs, harissa", "R95"],
@@ -101,7 +101,7 @@ const menus = [
     label: "PASTRY",
     time: "All day counter",
     title: "Bake",
-    bg: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80&sat=-40",
+    bg: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80",
     items: [
       ["Almond croissant", "R42"],
       ["Kouign-amann", "R48"],
@@ -115,7 +115,7 @@ const menus = [
     label: "LUNCH",
     time: "Served 12 – 4pm",
     title: "Table",
-    bg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
+    bg: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
     items: [
       ["Roast tomato & burrata tartine", "R135"],
       ["Confit chicken sandwich", "R145"],
@@ -129,7 +129,7 @@ const menus = [
     label: "COFFEE",
     time: "Bar open all day",
     title: "Brew",
-    bg: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80",
+    bg: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80",
     items: [
       ["Espresso", "R28"],
       ["Flat white", "R42"],
@@ -143,7 +143,7 @@ const menus = [
     label: "SUPPER",
     time: "Wed – Sat, from 6pm",
     title: "Ember",
-    bg: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    bg: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
     items: [
       ["Hearth bread, whipped bone marrow", "R85"],
       ["Charred leeks, romesco", "R120"],
@@ -155,105 +155,134 @@ const menus = [
   },
 ];
 
+// Get elements
 const track = document.getElementById("track");
 const dotsWrap = document.getElementById("dots");
 const label = document.getElementById("menuLabel");
 const viewBtn = document.getElementById("viewMenuBtn");
 
-let index = 0;
-
-// Build cards
-menus.forEach((m, i) => {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.dataset.i = i;
-  card.innerHTML = `
-    <div class="bg" style="background-image:url('${m.bg}')"></div>
-    <div class="overlay"></div>
-    <div class="content">
-      <div class="time-label">${m.time}</div>
-      <div class="big-title">${m.title}</div>
-      <div class="divider"></div>
-      <ul>
-        ${m.items.map(([n, p]) => `<li><span>${n}</span><span>${p}</span></li>`).join("")}
-      </ul>
-      <div class="foot">${m.foot}</div>
-    </div>
-  `;
-  card.addEventListener("click", () => {
-    if (i !== index) go(i);
-  });
-  track.appendChild(card);
-});
-
-// Build dots
-menus.forEach((_, i) => {
-  const d = document.createElement("button");
-  d.setAttribute("aria-label", `Menu ${i + 1}`);
-  d.addEventListener("click", () => go(i));
-  dotsWrap.appendChild(d);
-});
-
-const cards = [...track.querySelectorAll(".card")];
-const dots = [...dotsWrap.querySelectorAll("button")];
-
-function render() {
-  const SPACING = window.innerWidth < 720 ? 210 : 240;
-  cards.forEach((c, i) => {
-    const offset = i - index;
-    const abs = Math.abs(offset);
-    const translate = offset * SPACING;
-    const scale = abs === 0 ? 1 : abs === 1 ? 0.86 : 0.72;
-    const opacity = abs > 2 ? 0 : abs === 0 ? 1 : abs === 1 ? 0.85 : 0.4;
-    const z = 10 - abs;
-    c.style.transform = `translateX(${translate}px) scale(${scale})`;
-    c.style.opacity = opacity;
-    c.style.zIndex = z;
-    c.style.filter = abs === 0 ? "none" : "brightness(0.75)";
-  });
-  dots.forEach((d, i) => d.classList.toggle("active", i === index));
-  label.textContent = menus[index].label;
+// Safety check - if elements don't exist, exit
+if (!track || !dotsWrap || !label || !viewBtn) {
+  console.error("Required elements not found!");
+  console.log("track:", track);
+  console.log("dotsWrap:", dotsWrap);
+  console.log("label:", label);
+  console.log("viewBtn:", viewBtn);
+} else {
+  console.log("All elements found, initializing...");
+  initCarousel();
 }
 
-function go(i) {
-  index = Math.max(0, Math.min(menus.length - 1, i));
+function initCarousel() {
+  let index = 0;
+
+  // Build cards
+  menus.forEach((m, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.i = i;
+    // Add a fallback background color in case images fail
+    const bgColor = ["#2c1810", "#3d2b1f", "#1a2a1a", "#2a1f1a", "#1a1a2a"][i % 5];
+    card.innerHTML = `
+      <div class="bg" style="background-image:url('${m.bg}'); background-color: ${bgColor};"></div>
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="time-label">${m.time}</div>
+        <div class="big-title">${m.title}</div>
+        <div class="divider"></div>
+        <ul>
+          ${m.items.map(([n, p]) => `<li><span>${n}</span><span>${p}</span></li>`).join("")}
+        </ul>
+        <div class="foot">${m.foot}</div>
+      </div>
+    `;
+    card.addEventListener("click", () => {
+      if (i !== index) go(i);
+    });
+    track.appendChild(card);
+  });
+
+  // Build dots
+  menus.forEach((_, i) => {
+    const d = document.createElement("button");
+    d.setAttribute("aria-label", `Menu ${i + 1}`);
+    d.addEventListener("click", () => go(i));
+    dotsWrap.appendChild(d);
+  });
+
+  const cards = [...track.querySelectorAll(".card")];
+  const dots = [...dotsWrap.querySelectorAll("button")];
+
+  function render() {
+    const SPACING = window.innerWidth < 720 ? 210 : 240;
+    const totalCards = cards.length;
+    
+    cards.forEach((c, i) => {
+      const offset = i - index;
+      const abs = Math.abs(offset);
+      const translate = offset * SPACING;
+      const scale = abs === 0 ? 1 : abs === 1 ? 0.86 : 0.72;
+      const opacity = abs > 2 ? 0 : abs === 0 ? 1 : abs === 1 ? 0.85 : 0.4;
+      const z = 10 - abs;
+      
+      c.style.transform = `translateX(${translate}px) scale(${scale})`;
+      c.style.opacity = opacity;
+      c.style.zIndex = z;
+      c.style.filter = abs === 0 ? "none" : "brightness(0.6)";
+      // Ensure cards are visible
+      c.style.display = "block";
+    });
+    
+    dots.forEach((d, i) => d.classList.toggle("active", i === index));
+    label.textContent = menus[index].label;
+  }
+
+  function go(i) {
+    index = Math.max(0, Math.min(menus.length - 1, i));
+    render();
+  }
+
+  // Swipe / drag
+  let startX = null;
+  let currentX = 0;
+  
+  track.addEventListener("pointerdown", (e) => {
+    startX = e.clientX;
+    currentX = 0;
+    track.setPointerCapture(e.pointerId);
+  });
+  
+  track.addEventListener("pointermove", (e) => {
+    if (startX === null) return;
+    currentX = e.clientX - startX;
+  });
+  
+  track.addEventListener("pointerup", () => {
+    if (startX === null) return;
+    if (currentX < -50) go(index + 1);
+    else if (currentX > 50) go(index - 1);
+    startX = null;
+  });
+  
+  track.addEventListener("pointercancel", () => { startX = null; });
+
+  // Keyboard
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") go(index + 1);
+    if (e.key === "ArrowLeft") go(index - 1);
+  });
+
+  // Resize
+  window.addEventListener("resize", render);
+
+  viewBtn.addEventListener("click", () => {
+    alert(`Opening full ${menus[index].label} menu…`);
+  });
+
+  // Initial render
   render();
+  console.log("Carousel initialized successfully!");
 }
-
-// Swipe / drag
-let startX = null;
-let currentX = 0;
-track.addEventListener("pointerdown", (e) => {
-  startX = e.clientX;
-  currentX = 0;
-  track.setPointerCapture(e.pointerId);
-});
-track.addEventListener("pointermove", (e) => {
-  if (startX === null) return;
-  currentX = e.clientX - startX;
-});
-track.addEventListener("pointerup", () => {
-  if (startX === null) return;
-  if (currentX < -50) go(index + 1);
-  else if (currentX > 50) go(index - 1);
-  startX = null;
-});
-track.addEventListener("pointercancel", () => { startX = null; });
-
-// Keyboard
-window.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowRight") go(index + 1);
-  if (e.key === "ArrowLeft") go(index - 1);
-});
-
-// Resize
-window.addEventListener("resize", render);
-
-viewBtn.addEventListener("click", () => {
-  alert(`Opening full ${menus[index].label} menu…`);
-});
-
-render();
 </script>
 </body>
 </html>
